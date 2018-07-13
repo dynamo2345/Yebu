@@ -72,6 +72,16 @@ public class LoginActivity extends AppCompatActivity {
     String[] FzgResp = new String[30];
     String[] bookingLine = new String[100];
     String[][] booking_item = new String[100][7];
+
+//Booking Array
+    String[] fzgBooking = new String [100];
+    String[] fromDateBooking = new String[100];
+    String[] toDateBooking = new String [100];
+    String[] fromBooking = new String[100];
+    String[] forBooking = new String[100];
+    String[] commentsBooking = new String[100];
+
+
     private Intent intent;
     //private Request request;
 
@@ -206,32 +216,57 @@ public class LoginActivity extends AppCompatActivity {
             Elements rows = section.select("tr");
             for (Element item : rows) {
                 Elements booking = item.select("td");
-                for (Element booking_field : booking) { booking_item[bookingLineCount][bookingRowsCount] = booking_field.toString();
-                    if  (booking_item[bookingLineCount][bookingRowsCount].indexOf("</span>") > 0) {
+                for (Element booking_field : booking) {
+                    booking_item[bookingLineCount][bookingRowsCount] = booking_field.toString();
+                    if (booking_item[bookingLineCount][bookingRowsCount].indexOf("</span>") > 0) {
                         startpos = booking_item[bookingLineCount][bookingRowsCount].indexOf("</span>");
                         endpos = booking_item[bookingLineCount][bookingRowsCount].indexOf("</td>");
                         booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].substring(startpos + 8, endpos);
-                    }
-                    else {
+                    } else {
                         startpos = booking_item[bookingLineCount][bookingRowsCount].indexOf("<td>");
                         endpos = booking_item[bookingLineCount][bookingRowsCount].indexOf("</td>");
                         booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].substring(startpos + 4, endpos);
                     }
 
+                    switch (bookingRowsCount) {
+                        case 0:
+                            fzgBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            break;
+                        case 1:
+                            fromDateBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            break;
+                        case 2:
+                            toDateBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            break;
+                        case 3:
+                            fromBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            break;
+                        case 4:
+                            forBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            break;
+                        case 5:
+                            commentsBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            break;
+                    }
+
 
                     bookingRowsCount++;
                 }
+
                 bookingLine[bookingLineCount] = booking_item[bookingLineCount][0] + " " + booking_item[bookingLineCount][1] + " " + booking_item[bookingLineCount][2] + " " + booking_item[bookingLineCount][3] + " " +
                         booking_item[bookingLineCount][4] + " " + booking_item[bookingLineCount][5];
-                Log.i("out", booking_item[bookingLineCount][0] + " " + booking_item[bookingLineCount][1] + " " + booking_item[bookingLineCount][2] + " " + booking_item[bookingLineCount][3] + " " +
-                        booking_item[bookingLineCount][4] + " " + booking_item[bookingLineCount][5]);
-                bookingLineCount ++;
+               // Log.i("out", booking_item[bookingLineCount][0] + " " + booking_item[bookingLineCount][1] + " " + booking_item[bookingLineCount][2] + " " + booking_item[bookingLineCount][3] + " " +
+                //        booking_item[bookingLineCount][4] + " " + booking_item[bookingLineCount][5]);
+
+                Log.i("out", fzgBooking[bookingLineCount] + " " + fromDateBooking[bookingLineCount] + " " + toDateBooking[bookingLineCount]
+                        + " " + fromBooking[bookingLineCount] + " " + forBooking[bookingLineCount] + " " + commentsBooking[bookingLineCount]);
+                bookingLineCount++;
                 bookingRowsCount = 0;
             }
 
-            Log.i("out",booking_item[3][4]);
-            Log.i("out",String.valueOf(bookingLineCount));
-            Log.i("out",String.valueOf(bookingRowsCount));
+  //          Log.i("out",booking_item[3][4]);
+  //          Log.i("out",String.valueOf(bookingLineCount));
+  //          Log.i("out",String.valueOf(bookingRowsCount));
 
             //List <String> FZGlist = new ArrayList<>(Arrays.asList(Fzg));
             //String [] fzgList = new String[Fzgcount];
