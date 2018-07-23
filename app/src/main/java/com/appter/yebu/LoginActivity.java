@@ -39,9 +39,13 @@ import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
     private OkHttpClient okHttpClient;
     private String url = "https://yebu.de/cgi-bin/rr/rrmain.py";
     public String message = "LEER";
+    public String sessionId = "";
     String[] Fzg = new String[30];
     String[] FzgResp = new String[30];
     String[] bookingLine = new String[100];
@@ -75,8 +80,8 @@ public class LoginActivity extends AppCompatActivity {
 
 //Booking Array
     String[] fzgBooking = new String [100];
-    String[] fromDateBooking = new String[100];
-    String[] toDateBooking = new String [100];
+    Date[] fromDateBooking = new Date[100];
+    Date[] toDateBooking = new Date [100];
     String[] fromBooking = new String[100];
     String[] forBooking = new String[100];
     String[] commentsBooking = new String[100];
@@ -101,7 +106,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-
             }
         });
 
@@ -145,8 +149,6 @@ public class LoginActivity extends AppCompatActivity {
                     .add("account", "czermak")
                     .add("i_password", "digital30")
                     .add("f", "login")
-                    //.add("username", "tester")
-                    //.add("password", "test")
                     .build();
             Request request = new Request.Builder()
                     .url(url)
@@ -164,8 +166,6 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     message = response.body().string();
-                    Log.i("out", message);
-
 
                 }
             });
@@ -184,8 +184,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            //mAuthTask = null;
-            //showProgress(false);
+
             String selectedVal = null;
 
             int Fzgcount = 0;
@@ -193,9 +192,20 @@ public class LoginActivity extends AppCompatActivity {
             int bookingRowsCount = 0;
             int startpos = 0;
             int endpos = 0;
-            Log.i("out", message);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd. MMM. yyyy HH:mm");
+
+           // Log.i("out", message);
             org.jsoup.nodes.Document doc =  Jsoup.parse(message);
             //Element content = doc.getElementById("resource");
+
+            Elements options1 = doc.getElementsByAttributeValue("name", "sessionId");
+            for (Element option : options1) {
+                selectedVal = option.toString();
+                startpos = selectedVal.indexOf("value=");
+                endpos = selectedVal.indexOf(">");
+                sessionId = selectedVal.substring(startpos + 7, endpos-1);
+            }
+
 
             Elements options = doc.getElementsByAttributeValue("name", "resource").get(0).children();
             for (Element option : options) {
@@ -203,12 +213,12 @@ public class LoginActivity extends AppCompatActivity {
                 startpos = selectedVal.indexOf("=");
                 endpos = selectedVal.indexOf(">");
                 FzgResp[Fzgcount] = selectedVal.substring(startpos + 2, endpos-1);
-                Log.i("out", selectedVal.substring(startpos + 1, endpos));
+                //Log.i("out", selectedVal.substring(startpos + 1, endpos));
 
                 startpos = selectedVal.indexOf(">");
                 endpos = selectedVal.lastIndexOf("<");
                 Fzg[Fzgcount] = selectedVal.substring(startpos + 1, endpos);
-                Log.i("out", selectedVal.substring(startpos + 1, endpos));
+                //Log.i("out", selectedVal.substring(startpos + 1, endpos));
                 Fzgcount++;
             }
             Element option1 = doc.getElementById("sortable_table");
@@ -233,10 +243,24 @@ public class LoginActivity extends AppCompatActivity {
                             fzgBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
                             break;
                         case 1:
-                            fromDateBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            try {
+                                booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].replace("Mai" , "May");
+                                booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].replace("Okt" , "Oct");
+                                booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].replace("Dez" , "Dec");
+                                fromDateBooking[bookingLineCount] = formatter.parse(booking_item[bookingLineCount][bookingRowsCount]);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         case 2:
-                            toDateBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];
+                            try {
+                                booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].replace("Mai" , "May");
+                                booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].replace("Okt" , "Oct");
+                                booking_item[bookingLineCount][bookingRowsCount] = booking_item[bookingLineCount][bookingRowsCount].replace("Dez" , "Dec");
+                                toDateBooking[bookingLineCount] = formatter.parse(booking_item[bookingLineCount][bookingRowsCount]);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         case 3:
                             fromBooking[bookingLineCount] = booking_item[bookingLineCount][bookingRowsCount];

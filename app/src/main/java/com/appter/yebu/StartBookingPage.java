@@ -14,8 +14,9 @@ public class StartBookingPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_booking_page);
-        ListView listView1 = (ListView) findViewById(R.id.LV1);
+        setContentView(R.layout.menu_page);
+        Log.i("out","test");
+        /* ListView listView1 = (ListView) findViewById(R.id.LV1);
         Intent iin= getIntent();
         pageContent = iin.getStringArrayExtra("FZGList");
         int nrFzg = iin.getIntExtra("nrFZG", 0);
@@ -34,6 +35,6 @@ public class StartBookingPage extends AppCompatActivity {
 
 
 
-        //Log.i("Out",pageContent);
+        //Log.i("Out",pageContent); */
     }
 }
